@@ -1,7 +1,10 @@
 import unittest
-import expense_tracker
 from unittest.mock import patch
+import os
 import json
+import expense_tracker
+import expense_db_setup
+# import id_nums
 
 
 class TestExpenseCollectionWithArgs(unittest.TestCase):
@@ -69,6 +72,36 @@ class TestSaveToJson(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        pass
+
+
+class TestDB(unittest.TestCase):
+
+    def setUp(self):
+        self.db_doesnt_exist = "not_a_real.db"
+
+    def test_create_db(self):
+        self.assertEqual(expense_db_setup.create_db("loaf_0.db"), "DB already exists")
+        self.assertEqual(expense_db_setup.create_db(self.db_doesnt_exist), "DB created at not_a_real.db")
+
+    def tearDown(self):
+        try:
+            os.remove(self.db_doesnt_exist)
+        except FileNotFoundError:
+            # TODO: change to logging
+            print("The DB file {} was not created".format(self.db_doesnt_exist))
+
+
+class TestCreateUser(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_id_6_digits(self):
+        uid = id_nums.gen_uid()
+        self.assertTrue(len(str(uid)), 6)
+
+    def tearDown(self):
         pass
 
 

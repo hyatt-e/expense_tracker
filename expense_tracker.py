@@ -51,20 +51,29 @@ def json_to_expense():
 def cli_parse():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-a", type=float, required=True,
-        help="Dollar amount of expense")
-    parser.add_argument("-d", help="Description of expense")
+    parser.add_argument("-a", nargs=2, help="Add Expense. Arguments: 1)Dollar amount of expense 2)Description of expense")
+    parser.add_argument("-db", help="Create Database. Argument: DB file path and name")
     parser.add_argument("-p", type=bool,
         help="Print to console. Default: False", default=False)
 
     args = parser.parse_args()
 
-    if args is not None:
-        amount = args.a
-        desc = args.d
-        NewExpense = Expense(amount, desc)
+    # check for arguments; print help if no arguments given
+    if len(sys.argv) > 1:
+        if args.db is not None:
+            create_db_return = expense_db_setup.create_db(args.db)
+            print(create_db_return)
+
+
+        if args.a is not None:
+            amount = args.a
+            NewExpense = Expense(amount, desc)
+            return NewExpense
+
     else:
-        return None
+        # print help as standard error
+        parser.print_help(sys.stderr)
+        sys.exit(1)
 
     if args.p:
         NewExpense.print_expense()
@@ -77,4 +86,6 @@ if __name__ == '__main__':
     # if NewCollection.NewExpense is None:
     #     NewCollection.NewExpense = CollectExpense.request_expense_details()
 
-    NewCollection = Expense()
+    # NewCollection = Expense()
+
+    NewExpense = cli_parse()
